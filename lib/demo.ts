@@ -129,7 +129,8 @@ const BRIEFS: Record<Lang, BriefScript> = {
       "Taking away their phone. It holds the evidence and cuts them off from support",
       "Paying, replying to, or confronting the person responsible",
     ],
-    opening: "Something happened online that I'm scared about, and I need your help, not a scolding.",
+    opening:
+      "Something happened online that I'm scared about. Please don't be angry. I'm telling you because I trust you, and I need you to help me report it.",
   },
   zh: {
     what: {
@@ -148,7 +149,7 @@ const BRIEFS: Record<Lang, BriefScript> = {
       "接下来几天多关心孩子的心情。SOS 1767 和 Mindline 1771 可以帮助你们",
     ],
     avoid: ["责骂孩子，或问“你怎么这么不小心？”", "没收手机，因为手机里有证据，而且会让孩子失去支持", "付钱、回复或去找对方理论"],
-    opening: "我在网上遇到了一件让我很害怕的事，我需要您的帮忙，不是责骂。",
+    opening: "我在网上遇到了一件让我很害怕的事。请不要生气，我告诉您是因为我信任您。我需要您陪我一起去举报。",
   },
   ms: {
     what: {
@@ -174,7 +175,8 @@ const BRIEFS: Record<Lang, BriefScript> = {
       "Merampas telefon mereka, kerana ia menyimpan bukti dan memutuskan sokongan",
       "Membayar, membalas, atau berdepan dengan pelaku",
     ],
-    opening: "Ada sesuatu berlaku dalam talian yang buat saya takut, dan saya perlukan bantuan, bukan dimarahi.",
+    opening:
+      "Ada sesuatu berlaku dalam talian yang buat saya takut. Tolong jangan marah, saya beritahu kerana saya percaya pada anda. Saya perlukan anda temankan saya untuk buat laporan.",
   },
   ta: {
     what: {
@@ -200,7 +202,8 @@ const BRIEFS: Record<Lang, BriefScript> = {
       "கைபேசியைப் பறிப்பது. அதில் ஆதாரம் உள்ளது, ஆதரவும் துண்டிக்கப்படும்",
       "பணம் கொடுப்பது, பதில் அனுப்புவது, அல்லது குற்றவாளியை எதிர்கொள்வது",
     ],
-    opening: "இணையத்தில் எனக்குப் பயமாக இருக்கும் ஒன்று நடந்தது. எனக்குத் திட்டு வேண்டாம், உதவி வேண்டும்.",
+    opening:
+      "இணையத்தில் எனக்குப் பயமாக இருக்கும் ஒன்று நடந்தது. தயவுசெய்து கோபப்படாதீர்கள், உங்களை நம்புவதால்தான் சொல்கிறேன். புகாரளிக்க என்னுடன் வாருங்கள்.",
   },
 };
 
@@ -224,7 +227,9 @@ export function demoIncident(messages: ChatMessage[]): Incident {
   const deadline = text.match(/\bby (tonight|today|tomorrow|\d{1,2}(:\d{2})?\s?(am|pm))\b/i)?.[0];
   const demands =
     category === "intimate" || category === "scam"
-      ? (money ? `Payment demanded: ${money.join(", ")}` : "Payment or more images demanded") + (deadline ? `, ${deadline}` : "")
+      ? (money
+          ? `${category === "scam" ? "Money paid / requested" : "Payment demanded"}: ${money.join(", ")}`
+          : "Payment or more images demanded") + (deadline ? `, ${deadline}` : "")
       : "None stated";
   const urgency: Incident["urgency"] = category === "intimate" || /tonight|today|deadline|threat|今晚|malam ini|இன்றிரவு/i.test(text) ? "high" : "medium";
   const firstUser = messages.find((m) => m.role === "user")?.content ?? "";

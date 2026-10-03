@@ -14,6 +14,13 @@ const CRISIS: RegExp[] = [
   /\b(no (point|reason) (in )?(living|to live)|better off dead|don'?t want to (live|be alive|wake up))\b/i,
   /\b(jump|jumping)\s+(off|down)\b/i,
   /\bsian\s+until\s+(want|wan)\s+to\s+die\b/i,
+  // Indirect distress: young people rarely say "suicide" outright.
+  /\b(want|wanna|wish i could)\s+(to\s+)?(disappear|vanish|not exist)\b/i,
+  /\bcan'?t\s+(take|handle|do)\s+(this|it)\s+any\s?more\b/i,
+  /\b(better (off )?without me|wish i (was|were) never born|don'?t want to be here any\s?more|no one would (care|miss me))\b/i,
+  /想消失|受不了了|撑不下去|活着没意思|没有我会更好/,
+  /nak\s+hilang|mahu\s+hilang|tak\s+tahan\s+lagi|tidak\s+tahan\s+lagi|lebih\s+baik\s+tanpa\s+saya/i,
+  /மறைந்து\s*போக|தாங்க\s*முடியவில்லை/,
   /自杀|想死|不想活|结束(自己的)?生命|自残|割腕|跳楼|活不下去/,
   /bunuh\s+diri|nak\s+mati|mahu\s+mati|ingin\s+mati|tak\s+(nak|mahu)\s+hidup|cederakan\s+diri|terjun/i,
   /தற்கொலை|சாக\s*வேண்டும்|சாகணும்|சாகப்\s*போகிறேன்|வாழ\s*விரும்பவில்லை|உயிரை\s*மாய்/,

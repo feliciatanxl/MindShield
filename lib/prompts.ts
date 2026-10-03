@@ -47,7 +47,7 @@ Return ONLY JSON with this exact shape:
   "notTheirFault": "1–2 sentences explaining the youth was deliberately targeted/manipulated and why blame makes things worse",
   "doNow": ["3 concrete supportive actions the adult can take today, e.g. stay calm and listen, help report to the right place, go with them to the police"],
   "avoid": ["3 things to avoid, e.g. scolding, taking away the phone (it holds evidence and cuts them off from support), paying or contacting the perpetrator"],
-  "openingLine": "one honest sentence the youth could say first, in first person"
+  "openingLine": "1–2 first-person sentences the youth can say first: admit something happened, then make ONE direct ask (e.g. 'Please come with me to make a report. Please don't be angry, I'm telling you because I trust you.')"
 }`;
 }
 

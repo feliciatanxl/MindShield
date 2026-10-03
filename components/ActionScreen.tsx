@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { T } from "@/lib/i18n";
 import { downloadIncidentPdf } from "@/lib/pdf";
+import { evidenceStatus, incidentText } from "@/lib/report";
 import { CATEGORY_LABEL, ROUTES } from "@/lib/resources";
 import type { Category, Incident, Lang } from "@/lib/types";
 import { Spinner } from "./Shell";
@@ -30,6 +31,9 @@ export function ActionScreen(p: Props) {
   const done = p.checked.filter(Boolean).length;
   const category = p.incident?.category ?? p.fallbackCategory;
   const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const evidence = evidenceStatus(p.checked);
+  const card = T[p.lang].card;
 
   function field<K extends keyof Incident>(k: K, v: Incident[K]) {
     if (p.incident) p.setIncident({ ...p.incident, [k]: v });
@@ -39,10 +43,17 @@ export function ActionScreen(p: Props) {
     if (!p.incident || saving) return;
     setSaving(true);
     try {
-      await downloadIncidentPdf(p.incident);
+      await downloadIncidentPdf(p.incident, evidence);
     } finally {
       setSaving(false);
     }
+  }
+
+  async function copy() {
+    if (!p.incident) return;
+    await navigator.clipboard.writeText(incidentText(p.incident, evidence));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   }
 
   return (
@@ -159,13 +170,17 @@ export function ActionScreen(p: Props) {
                 className="w-full rounded-xl border border-sage-200 px-3 py-2 leading-relaxed"
               />
             </Field>
-            <div className="no-print grid grid-cols-3 gap-2 pt-1">
+            <p className="rounded-xl bg-sage-50 px-3 py-2 text-xs text-sage-700">📸 {evidence}</p>
+            <div className="no-print grid grid-cols-2 gap-2 pt-1">
               <button
                 onClick={download}
                 disabled={saving}
                 className="rounded-2xl bg-sage-600 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {saving ? <Spinner label="…" /> : `⬇ ${t.download} PDF`}
+              </button>
+              <button onClick={copy} className="rounded-2xl bg-sage-100 py-2.5 text-sm font-semibold text-sage-700 hover:bg-sage-200">
+                {copied ? `✓ ${card.copied}` : `📋 ${card.copy}`}
               </button>
               <button onClick={() => window.print()} className="rounded-2xl border border-sage-200 py-2.5 text-sm font-semibold text-sage-700">
                 🖨 {t.print}

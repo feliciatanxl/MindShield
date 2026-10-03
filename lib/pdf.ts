@@ -11,7 +11,7 @@ const URGENCY_COLOR = { high: ["#fbeceb", "#8f2f2a"], medium: ["#ece7f8", "#6753
  * Rasterising (vs. jsPDF text) means Chinese / Tamil / Malay quotes render correctly without
  * embedding multi-MB fonts. Everything happens on-device: the report never touches a server.
  */
-export async function downloadIncidentPdf(i: Incident) {
+export async function downloadIncidentPdf(i: Incident, evidence: string) {
   const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import("html2canvas-pro"), import("jspdf")]);
 
   const [ubg, ufg] = URGENCY_COLOR[i.urgency];
@@ -43,6 +43,7 @@ export async function downloadIncidentPdf(i: Incident) {
         ${row("Account(s) involved", i.handles.join(", ") || "Unknown")}
         ${row("When it started", i.firstSeen)}
         ${row("What they want", i.demands)}
+        ${row("Evidence", evidence)}
       </table>
       <div style="margin-top:24px;font-size:12px;font-weight:600;color:#5b6676;text-transform:uppercase;letter-spacing:.04em">What happened</div>
       <div style="margin-top:8px;font-size:15px;white-space:pre-wrap;border:1px solid #e3efe6;border-radius:12px;padding:14px 16px">${esc(i.summary)}</div>

@@ -14,7 +14,8 @@ export async function POST(req: Request) {
   const crisis = detectCrisis(latest);
   const category = detectCategory(userText);
 
-  const live = await complete({ system: chatSystemPrompt(lang, category, crisis), messages });
+  // Short timeout: on bad venue Wi-Fi, fall back to the scripted reply fast rather than stall the pitch.
+  const live = await complete({ system: chatSystemPrompt(lang, category, crisis), messages, timeoutMs: 8_000 });
   return NextResponse.json({
     reply: live ?? demoReply(messages, lang, crisis),
     mode: live ? "live" : "demo",

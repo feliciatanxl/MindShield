@@ -5,9 +5,9 @@ import type { ChatMessage } from "./types";
  * Returns null when no key is set or the call fails, so routes can fall back to demo mode and the
  * on-stage demo never dies on venue Wi-Fi.
  */
-type Args = { system: string; messages: ChatMessage[]; json?: boolean; temperature?: number };
+type Args = { system: string; messages: ChatMessage[]; json?: boolean; temperature?: number; timeoutMs?: number };
 
-const TIMEOUT_MS = 20_000;
+const DEFAULT_TIMEOUT_MS = 15_000;
 
 export function provider(): "gemini" | "openai" | null {
   if (process.env.GEMINI_API_KEY) return "gemini";
@@ -31,12 +31,12 @@ export async function complete(args: Args): Promise<string | null> {
   }
 }
 
-async function gemini({ system, messages, json, temperature = 0.6 }: Args) {
+async function gemini({ system, messages, json, temperature = 0.6, timeoutMs = DEFAULT_TIMEOUT_MS }: Args) {
   const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY! },
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
       contents: messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
@@ -54,11 +54,11 @@ async function gemini({ system, messages, json, temperature = 0.6 }: Args) {
   return text?.trim() || null;
 }
 
-async function openai({ system, messages, json, temperature = 0.6 }: Args) {
+async function openai({ system, messages, json, temperature = 0.6, timeoutMs = DEFAULT_TIMEOUT_MS }: Args) {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeoutMs),
     body: JSON.stringify({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
       temperature,

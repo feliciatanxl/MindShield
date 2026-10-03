@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ActionScreen } from "@/components/ActionScreen";
 import { FamilyScreen } from "@/components/FamilyScreen";
+import { Handoff } from "@/components/Handoff";
 import { HomeScreen } from "@/components/HomeScreen";
 import { BottomNav, CrisisBanner, Header, HotlineSheet, PaneTabs, type Tab } from "@/components/Shell";
 import { TalkScreen } from "@/components/TalkScreen";
@@ -33,6 +34,7 @@ export default function MindShield() {
   const [briefLang, setBriefLang] = useState<Lang>("zh");
   const [brief, setBrief] = useState<FamilyBrief | null>(null);
   const [briefLoading, setBriefLoading] = useState(false);
+  const [handoff, setHandoff] = useState(false);
 
   const [checked, setChecked] = useState<boolean[]>(() => Array(5).fill(false));
   const [incident, setIncident] = useState<Incident | null>(null);
@@ -178,6 +180,7 @@ export default function MindShield() {
                 brief={brief}
                 loading={briefLoading}
                 onGenerate={generateBrief}
+                onHandoff={() => setHandoff(true)}
               />
             </div>
             <div className={panel("action")}>
@@ -198,6 +201,16 @@ export default function MindShield() {
       </main>
 
       <BottomNav lang={lang} tab={tab} setTab={go} />
+      {handoff && brief && (
+        <Handoff
+          brief={brief}
+          briefLang={briefLang}
+          lang={lang}
+          audience={audience}
+          onClose={() => setHandoff(false)}
+          onReport={() => (setHandoff(false), go("action"))}
+        />
+      )}
       {showHotlines && <HotlineSheet lang={lang} onClose={() => setShowHotlines(false)} />}
     </div>
   );

@@ -81,6 +81,30 @@ type Strings = {
     print: string;
     under18: string;
   };
+  /** "Hand to Mum" mode. Parent-facing strings are read in the caregiver's language. */
+  handoff: {
+    handTo: (who: string) => string;
+    handHint: string;
+    introTitle: string;
+    introBody: string;
+    begin: string;
+    next: string;
+    back: string;
+    listen: string;
+    stop: string;
+    readScreen: string;
+    respondTitle: string;
+    respondHere: string;
+    respondCall: string;
+    respondMoment: string;
+    momentBody: string;
+    callTitle: string;
+    thanks: string;
+    replyFrom: (who: string) => string;
+    brave: string;
+    nextReport: string;
+    done: string;
+  };
   hotlinesTitle: string;
   close: string;
 };
@@ -177,6 +201,29 @@ export const T: Record<Lang, Strings> = {
       under18:
         "Under 18? A parent or guardian files the Online Safety Commission report with you. The Family tab can help you start that conversation.",
     },
+    handoff: {
+      handTo: (who) => `Hand the phone to ${who}`,
+      handHint: "It will guide them step by step in their language, and read it aloud.",
+      introTitle: "Someone who trusts you has something important to tell you.",
+      introBody: "Please sit together for two minutes. This screen will guide you, one step at a time.",
+      begin: "Start",
+      next: "Next",
+      back: "Back",
+      listen: "Listen",
+      stop: "Stop",
+      readScreen: "Please read the screen together.",
+      respondTitle: "How would you like to respond?",
+      respondHere: "I'm here. We'll handle this together.",
+      respondCall: "Let's call someone for advice",
+      respondMoment: "I need a moment",
+      momentBody: "That's OK. Take a slow breath. They came to you because they trust you.",
+      callTitle: "Free help, available now",
+      thanks: "Thank you. Please hand the phone back.",
+      replyFrom: (who) => `${who} says:`,
+      brave: "Telling them was brave. You're not alone in this any more.",
+      nextReport: "Next: make the report together",
+      done: "Done",
+    },
     hotlinesTitle: "Talk to someone now",
     close: "Close",
   },
@@ -268,6 +315,29 @@ export const T: Record<Lang, Strings> = {
       download: "下载",
       print: "打印",
       under18: "未满18岁？网络安全委员会（OSC）的报告需由父母或监护人陪同提交。“家人”页面可以帮你开口。",
+    },
+    handoff: {
+      handTo: (who) => `把手机交给${who}`,
+      handHint: "它会用他们的语言一步一步引导，还会朗读出来。",
+      introTitle: "一个信任您的人，有重要的事想告诉您。",
+      introBody: "请坐下来一起看两分钟。这个画面会一步一步引导您。",
+      begin: "开始",
+      next: "下一步",
+      back: "上一步",
+      listen: "朗读",
+      stop: "停止",
+      readScreen: "请一起看屏幕上的内容。",
+      respondTitle: "您想怎么回应？",
+      respondHere: "我在这里。我们一起面对。",
+      respondCall: "我们打电话问问专业意见",
+      respondMoment: "我需要冷静一下",
+      momentBody: "没关系。慢慢深呼吸。孩子来找您，是因为信任您。",
+      callTitle: "免费帮助，现在就可以联系",
+      thanks: "谢谢您。请把手机交还给孩子。",
+      replyFrom: (who) => `${who}说：`,
+      brave: "说出来需要很大的勇气。你不再是一个人面对了。",
+      nextReport: "下一步：一起举报",
+      done: "完成",
     },
     hotlinesTitle: "现在就找人聊聊",
     close: "关闭",
@@ -364,6 +434,29 @@ export const T: Record<Lang, Strings> = {
       under18:
         "Bawah 18 tahun? Ibu bapa atau penjaga membuat laporan kepada Suruhanjaya Keselamatan Dalam Talian (OSC) bersama anda. Tab Keluarga boleh bantu anda mula bercakap.",
     },
+    handoff: {
+      handTo: (who) => `Serahkan telefon kepada ${who}`,
+      handHint: "Ia akan membimbing mereka langkah demi langkah dalam bahasa mereka, dan membacanya dengan kuat.",
+      introTitle: "Seseorang yang mempercayai anda ada perkara penting untuk diberitahu.",
+      introBody: "Sila duduk bersama selama dua minit. Skrin ini akan membimbing anda, satu langkah demi satu.",
+      begin: "Mula",
+      next: "Seterusnya",
+      back: "Kembali",
+      listen: "Dengar",
+      stop: "Berhenti",
+      readScreen: "Sila baca skrin bersama-sama.",
+      respondTitle: "Bagaimana anda mahu memberi respons?",
+      respondHere: "Saya ada di sini. Kita hadapi bersama.",
+      respondCall: "Mari telefon seseorang untuk nasihat",
+      respondMoment: "Saya perlukan sedikit masa",
+      momentBody: "Tidak mengapa. Tarik nafas perlahan-lahan. Mereka datang kepada anda kerana mereka percaya pada anda.",
+      callTitle: "Bantuan percuma, sedia sekarang",
+      thanks: "Terima kasih. Sila serahkan telefon semula.",
+      replyFrom: (who) => `${who} kata:`,
+      brave: "Memberitahu mereka adalah satu keberanian. Anda tidak keseorangan lagi.",
+      nextReport: "Seterusnya: buat laporan bersama",
+      done: "Selesai",
+    },
     hotlinesTitle: "Bercakap dengan seseorang sekarang",
     close: "Tutup",
   },
@@ -458,6 +551,29 @@ export const T: Record<Lang, Strings> = {
       print: "அச்சிடு",
       under18:
         "18 வயதுக்குக் கீழா? இணையப் பாதுகாப்பு ஆணையத்திடம் (OSC) பெற்றோர் அல்லது பாதுகாவலர் உங்களுடன் சேர்ந்து புகாரளிப்பார். 'குடும்பம்' பகுதி பேச்சைத் தொடங்க உதவும்.",
+    },
+    handoff: {
+      handTo: (who) => `கைபேசியை ${who}-இடம் கொடுங்கள்`,
+      handHint: "அது அவர்கள் மொழியில் படிப்படியாக வழிகாட்டி, சத்தமாக வாசிக்கும்.",
+      introTitle: "உங்களை நம்பும் ஒருவர் உங்களிடம் முக்கியமான ஒன்றைச் சொல்ல விரும்புகிறார்.",
+      introBody: "தயவுசெய்து இரண்டு நிமிடம் சேர்ந்து உட்காருங்கள். இந்தத் திரை ஒவ்வொரு படியாக வழிகாட்டும்.",
+      begin: "தொடங்கு",
+      next: "அடுத்து",
+      back: "பின்செல்",
+      listen: "கேள்",
+      stop: "நிறுத்து",
+      readScreen: "தயவுசெய்து திரையைச் சேர்ந்து வாசியுங்கள்.",
+      respondTitle: "நீங்கள் எப்படிப் பதில் சொல்ல விரும்புகிறீர்கள்?",
+      respondHere: "நான் இங்கே இருக்கிறேன். நாம் சேர்ந்து சமாளிப்போம்.",
+      respondCall: "ஆலோசனைக்கு யாரையாவது அழைப்போம்",
+      respondMoment: "எனக்குச் சிறிது நேரம் வேண்டும்",
+      momentBody: "பரவாயில்லை. மெதுவாக மூச்சு விடுங்கள். அவர்கள் உங்களை நம்புவதால்தான் உங்களிடம் வந்தார்கள்.",
+      callTitle: "இலவச உதவி, இப்போதே கிடைக்கும்",
+      thanks: "நன்றி. தயவுசெய்து கைபேசியைத் திருப்பிக் கொடுங்கள்.",
+      replyFrom: (who) => `${who} சொல்கிறார்:`,
+      brave: "அவர்களிடம் சொன்னது தைரியம். இனி நீங்கள் தனியாக இல்லை.",
+      nextReport: "அடுத்து: சேர்ந்து புகாரளிப்போம்",
+      done: "முடிந்தது",
     },
     hotlinesTitle: "இப்போதே ஒருவரிடம் பேசுங்கள்",
     close: "மூடு",

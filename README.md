@@ -47,9 +47,13 @@ Deploy: push to a GitHub repo, import it on Vercel, and add the key as an env va
 2. **Talk** → AI names it (sextortion), says *not your fault*, *don't pay*, and asks for screenshots.
    Type: `honestly i just want to end it all, my number is 91234567`
    → the **crisis banner** appears instantly, and the phone number shows as `[PHONE]` with "1 personal detail hidden".
-3. Tap **Help me tell my family** → *Grandparent* → **中文** (or தமிழ்) → *Create the note* → **🔊 Read aloud**.
-4. Tap **Act** → tick the checklist → *Build summary* → show OSC routing ("report directly, no platform first") → **Download PDF**.
-5. Close on **Quick exit**.
+3. Tap **Help me tell my family** → *Grandparent* → **中文** (or தமிழ்) → *Create the note*.
+4. **The signature moment:** tap **📲 Hand the phone to Grandparent** and *physically hand your phone* to a teammate playing Ah Ma.
+   They tap through the large-print slides (each one is read aloud) and choose **"我在这里。我们一起面对。"**
+   They hand the phone back, and the youth sees *"Grandparent says: I'm here. We'll handle this together."*
+   (On a laptop, set up the voice before the pitch: Mandarin/Tamil voices depend on the device. Phones usually have them.)
+5. Tap **Next: make the report together** (it opens Act) → tick the checklist → *Build summary* → show OSC routing ("report directly, no platform first") → **Download PDF**.
+6. Close on **Quick exit**.
 
 ## Project layout
 

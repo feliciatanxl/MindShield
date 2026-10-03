@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LANGS, T } from "@/lib/i18n";
+import { useSpeech } from "@/lib/speech";
 import type { Audience, FamilyBrief, Lang } from "@/lib/types";
 import { Spinner } from "./Shell";
 
@@ -15,6 +16,7 @@ type Props = {
   brief: FamilyBrief | null;
   loading: boolean;
   onGenerate: () => void;
+  onHandoff: () => void;
 };
 
 const AUDIENCE_ICON: Record<Audience, string> = { mum: "👩", dad: "👨", grandparent: "👵", teacher: "🧑‍🏫" };
@@ -80,15 +82,37 @@ export function FamilyScreen(p: Props) {
       )}
 
       {p.brief && !p.loading && (
-        <BriefCard brief={p.brief} lang={p.briefLang} who={T[p.briefLang].family.audiences[p.audience]} />
+        <BriefCard
+          brief={p.brief}
+          lang={p.briefLang}
+          who={T[p.briefLang].family.audiences[p.audience]}
+          youthLang={p.lang}
+          youthWho={t.family.audiences[p.audience]}
+          onHandoff={p.onHandoff}
+        />
       )}
     </div>
   );
 }
 
-function BriefCard({ brief, lang, who }: { brief: FamilyBrief; lang: Lang; who: string }) {
+function BriefCard({
+  brief,
+  lang,
+  who,
+  youthLang,
+  youthWho,
+  onHandoff,
+}: {
+  brief: FamilyBrief;
+  lang: Lang;
+  who: string;
+  youthLang: Lang;
+  youthWho: string;
+  onHandoff: () => void;
+}) {
   const c = T[lang].card;
-  const [speaking, setSpeaking] = useState(false);
+  const hand = T[youthLang].handoff;
+  const { speak, stop, speaking, available } = useSpeech(lang);
   const [copied, setCopied] = useState(false);
   const [noVoice, setNoVoice] = useState(false);
 
@@ -104,28 +128,11 @@ function BriefCard({ brief, lang, who }: { brief: FamilyBrief; lang: Lang; who: 
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    return () => window.speechSynthesis?.cancel();
   }, []);
 
-  function speak() {
-    const synth = window.speechSynthesis;
-    if (!synth) return setNoVoice(true);
-    if (speaking) {
-      synth.cancel();
-      return setSpeaking(false);
-    }
-    const code = LANGS.find((l) => l.id === lang)!.speech;
-    const prefix = code.slice(0, 2);
-    const voice = synth.getVoices().find((v) => v.lang.replace("_", "-").toLowerCase().startsWith(prefix));
-    if (!voice && lang !== "en") return setNoVoice(true);
-    const u = new SpeechSynthesisUtterance(plain.replace(/•/g, ""));
-    u.lang = code;
-    if (voice) u.voice = voice;
-    u.rate = 0.9; // slower for elderly listeners
-    u.onend = () => setSpeaking(false);
-    synth.cancel();
-    synth.speak(u);
-    setSpeaking(true);
+  function toggleSpeak() {
+    if (speaking) return stop();
+    if (!available || !speak(plain)) setNoVoice(true);
   }
 
   async function copy() {
@@ -138,6 +145,19 @@ function BriefCard({ brief, lang, who }: { brief: FamilyBrief; lang: Lang; who: 
     <article ref={ref} lang={lang} className="rise scroll-mt-20 md:scroll-mt-4 overflow-hidden rounded-3xl bg-white shadow-sm">
       <div className="bg-gradient-to-r from-lav-100 to-sage-100 px-5 py-4">
         <h3 className="text-lg font-semibold md:text-2xl">💌 {c.heading(who)}</h3>
+        <button
+          onClick={onHandoff}
+          lang={youthLang}
+          className="no-print mt-3 flex w-full items-center gap-3 rounded-2xl bg-sage-600 px-4 py-3.5 text-left text-white shadow-lg shadow-sage-200 hover:bg-sage-700"
+        >
+          <span className="text-2xl" aria-hidden>
+            📲
+          </span>
+          <span>
+            <span className="block font-semibold md:text-lg">{hand.handTo(youthWho)}</span>
+            <span className="block text-xs text-white/80 md:text-sm">{hand.handHint}</span>
+          </span>
+        </button>
       </div>
       <div className="space-y-4 p-5 text-[15px] leading-relaxed md:space-y-5 md:p-7 md:text-lg">
         <blockquote className="rounded-2xl bg-lav-50 p-4 italic text-lav-600">
@@ -168,7 +188,7 @@ function BriefCard({ brief, lang, who }: { brief: FamilyBrief; lang: Lang; who: 
         </Section>
       </div>
       <div className="no-print grid grid-cols-2 gap-2 border-t border-sage-100 p-4">
-        <button onClick={speak} className="rounded-2xl bg-sage-600 py-3 text-sm font-semibold text-white">
+        <button onClick={toggleSpeak} className="rounded-2xl border border-sage-200 py-3 text-sm font-semibold text-sage-700">
           {speaking ? `⏹ ${c.stop}` : `🔊 ${c.readAloud}`}
         </button>
         <button onClick={copy} className="rounded-2xl border border-sage-200 py-3 text-sm font-semibold text-sage-700">

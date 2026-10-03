@@ -46,7 +46,7 @@ export function ActionScreen(p: Props) {
   }
 
   return (
-    <div className="space-y-5 px-4 py-6">
+    <div className="space-y-5 px-4 py-6 md:px-6">
       <section className="no-print">
         <h1 className="text-xl font-semibold">{t.title}</h1>
         <p className="mt-1 text-sm text-muted">{t.intro}</p>

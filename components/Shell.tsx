@@ -9,25 +9,25 @@ export type Tab = "home" | "talk" | "family" | "action";
 export function Header({ lang, onExit, onHelp }: { lang: Lang; onExit: () => void; onHelp: () => void }) {
   const t = T[lang];
   return (
-    <header className="no-print sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-sage-100 bg-white/85 px-4 py-3 backdrop-blur">
+    <header className="no-print sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-sage-100 bg-white/85 px-4 py-3 backdrop-blur md:px-6 md:py-4">
       <div className="flex items-center gap-2">
         <ShieldIcon />
         <div className="leading-tight">
-          <div className="whitespace-nowrap text-[15px] font-semibold">MindShield SG</div>
+          <div className="whitespace-nowrap text-[15px] font-semibold md:text-lg">MindShield SG</div>
           <div className="hidden text-xs text-muted min-[420px]:block">{t.tagline}</div>
         </div>
       </div>
       <div className="flex items-center gap-2">
         <button
           onClick={onHelp}
-          className="whitespace-nowrap rounded-full bg-lav-100 px-3 py-1.5 text-xs font-semibold text-lav-600 hover:bg-lav-200"
+          className="whitespace-nowrap rounded-full bg-lav-100 px-3 py-1.5 text-xs font-semibold text-lav-600 hover:bg-lav-200 md:px-4 md:py-2 md:text-sm"
         >
           {t.getHelp}
         </button>
         <button
           onClick={onExit}
           title="Instantly leaves this site and clears everything"
-          className="whitespace-nowrap rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+          className="whitespace-nowrap rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 md:px-4 md:py-2 md:text-sm"
         >
           ✕ {t.quickExit}
         </button>
@@ -39,10 +39,15 @@ export function Header({ lang, onExit, onHelp }: { lang: Lang; onExit: () => voi
 export function CrisisBanner({ lang, onMore }: { lang: Lang; onMore: () => void }) {
   const t = T[lang];
   return (
-    <div role="alert" className="no-print rise mx-4 mt-3 rounded-2xl border border-rose-ink/20 bg-rose-soft p-4">
-      <p className="font-semibold text-rose-ink">{t.crisisTitle}</p>
-      <p className="mt-1 text-sm text-rose-ink/80">{t.crisisBody}</p>
-      <div className="mt-3 grid grid-cols-2 gap-2">
+    <div
+      role="alert"
+      className="no-print rise mx-4 mt-3 rounded-2xl border border-rose-ink/20 bg-rose-soft p-4 md:mx-5 md:mt-5 md:flex md:items-center md:gap-6 lg:mx-6 xl:mx-auto xl:w-[calc(80rem-3rem)]"
+    >
+      <div className="md:flex-1">
+        <p className="font-semibold text-rose-ink">{t.crisisTitle}</p>
+        <p className="mt-1 text-sm text-rose-ink/80">{t.crisisBody}</p>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2 md:mt-0 md:shrink-0">
         <a href="tel:1767" className="rounded-xl bg-rose-ink px-3 py-2 text-center text-sm font-semibold text-white">
           📞 SOS 1767
         </a>
@@ -55,7 +60,7 @@ export function CrisisBanner({ lang, onMore }: { lang: Lang; onMore: () => void 
           💬 WhatsApp 9151 1767
         </a>
       </div>
-      <button onClick={onMore} className="mt-2 text-xs font-medium text-rose-ink underline">
+      <button onClick={onMore} className="mt-2 text-xs font-medium text-rose-ink underline md:mt-0 md:shrink-0">
         999 · Mindline 1771 · more
       </button>
     </div>
@@ -114,7 +119,7 @@ export function BottomNav({ lang, tab, setTab }: { lang: Lang; tab: Tab; setTab:
     { id: "action", icon: "🛡️", label: t.tabs.action },
   ];
   return (
-    <nav className="no-print sticky bottom-0 z-20 grid grid-cols-4 border-t border-sage-100 bg-white/90 backdrop-blur">
+    <nav className="no-print sticky bottom-0 z-20 grid grid-cols-4 border-t border-sage-100 bg-white/90 backdrop-blur md:hidden">
       {items.map((i) => (
         <button
           key={i.id}
@@ -131,6 +136,35 @@ export function BottomNav({ lang, tab, setTab }: { lang: Lang; tab: Tab; setTab:
         </button>
       ))}
     </nav>
+  );
+}
+
+/** Segmented switcher at the top of each pane on tablet/desktop (the phone uses BottomNav instead). */
+export function PaneTabs({
+  items,
+  active,
+  onSelect,
+}: {
+  items: { id: Tab; icon: string; label: string }[];
+  active: Tab;
+  onSelect: (t: Tab) => void;
+}) {
+  return (
+    <div className="no-print hidden shrink-0 gap-1 border-b border-sage-100 bg-white/80 p-2 md:flex">
+      {items.map((i) => (
+        <button
+          key={i.id}
+          onClick={() => onSelect(i.id)}
+          aria-pressed={active === i.id}
+          className={`flex flex-1 items-center justify-center gap-2 rounded-2xl px-3 py-2 text-sm ${
+            active === i.id ? "bg-sage-100 font-semibold text-sage-700" : "text-muted hover:bg-sage-50"
+          }`}
+        >
+          <span aria-hidden>{i.icon}</span>
+          {i.label}
+        </button>
+      ))}
+    </div>
   );
 }
 

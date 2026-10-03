@@ -28,8 +28,8 @@ export function TalkScreen({ lang, messages, loading, redacted, mode, onSend, go
   const hasReply = messages.some((m) => m.role === "assistant");
 
   return (
-    <div className="flex min-h-full flex-col">
-      <div className="flex-1 space-y-3 px-4 py-4">
+    <div className="flex min-h-full flex-1 flex-col">
+      <div className="flex-1 space-y-3 px-4 py-4 md:px-6">
         {mode === "demo" && (
           <p className="text-center text-[11px] uppercase tracking-wide text-muted">{t.demoMode}</p>
         )}
@@ -69,7 +69,7 @@ export function TalkScreen({ lang, messages, loading, redacted, mode, onSend, go
       </div>
 
       <form
-        className="sticky bottom-[60px] flex gap-2 border-t border-sage-100 bg-white/90 px-4 py-3 backdrop-blur"
+        className="sticky bottom-[60px] flex gap-2 md:bottom-0 md:px-6 border-t border-sage-100 bg-white/90 px-4 py-3 backdrop-blur"
         onSubmit={(e) => {
           e.preventDefault();
           if (!draft.trim() || loading) return;

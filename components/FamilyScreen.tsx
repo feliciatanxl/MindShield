@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LANGS, T } from "@/lib/i18n";
 import type { Audience, FamilyBrief, Lang } from "@/lib/types";
 import { Spinner } from "./Shell";
@@ -22,7 +22,7 @@ const AUDIENCE_ICON: Record<Audience, string> = { mum: "👩", dad: "👨", gran
 export function FamilyScreen(p: Props) {
   const t = T[p.lang];
   return (
-    <div className="space-y-5 px-4 py-6">
+    <div className="space-y-5 px-4 py-6 md:px-6">
       <section>
         <h1 className="text-xl font-semibold">{t.family.title}</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">{t.family.intro}</p>
@@ -101,7 +101,11 @@ function BriefCard({ brief, lang, who }: { brief: FamilyBrief; lang: Lang; who: 
     `${c.avoid}:\n${brief.avoid.map((d) => `• ${d}`).join("\n")}`,
   ].join("\n\n");
 
-  useEffect(() => () => window.speechSynthesis?.cancel(), []);
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return () => window.speechSynthesis?.cancel();
+  }, []);
 
   function speak() {
     const synth = window.speechSynthesis;
@@ -131,11 +135,11 @@ function BriefCard({ brief, lang, who }: { brief: FamilyBrief; lang: Lang; who: 
   }
 
   return (
-    <article lang={lang} className="rise print-area overflow-hidden rounded-3xl bg-white shadow-sm">
+    <article ref={ref} lang={lang} className="rise scroll-mt-20 md:scroll-mt-4 overflow-hidden rounded-3xl bg-white shadow-sm">
       <div className="bg-gradient-to-r from-lav-100 to-sage-100 px-5 py-4">
-        <h3 className="text-lg font-semibold">💌 {c.heading(who)}</h3>
+        <h3 className="text-lg font-semibold md:text-2xl">💌 {c.heading(who)}</h3>
       </div>
-      <div className="space-y-4 p-5 text-[15px] leading-relaxed">
+      <div className="space-y-4 p-5 text-[15px] leading-relaxed md:space-y-5 md:p-7 md:text-lg">
         <blockquote className="rounded-2xl bg-lav-50 p-4 italic text-lav-600">
           <div className="mb-1 text-xs font-semibold not-italic uppercase tracking-wide">{c.fromChild}</div>
           “{brief.openingLine}”

@@ -20,7 +20,7 @@ export function HomeScreen({ lang, setLang, mood, setMood, onStart }: Props) {
   const [draft, setDraft] = useState("");
 
   return (
-    <div className="space-y-6 px-4 py-6">
+    <div className="space-y-6 px-4 py-6 md:px-6">
       <section className="rise rounded-3xl bg-white p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <ShieldIcon size={44} />

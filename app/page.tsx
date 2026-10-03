@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ActionScreen } from "@/components/ActionScreen";
 import { FamilyScreen } from "@/components/FamilyScreen";
 import { HomeScreen } from "@/components/HomeScreen";
-import { BottomNav, CrisisBanner, Header, HotlineSheet, type Tab } from "@/components/Shell";
+import { BottomNav, CrisisBanner, Header, HotlineSheet, PaneTabs, type Tab } from "@/components/Shell";
 import { TalkScreen } from "@/components/TalkScreen";
 import { detectCategory, detectCrisis } from "@/lib/guardrails";
 import { T } from "@/lib/i18n";
@@ -16,7 +16,10 @@ import type { AiMode, Audience, ChatMessage, FamilyBrief, Incident, Lang } from 
  * Closing the tab (or Quick Exit) erases the whole session.
  */
 export default function MindShield() {
+  // Phone: one screen at a time (`tab`). Tablet/desktop: two panes side by side,
+  // conversation on the left (Home/Talk) and tools on the right (`side`: Family/Act).
   const [tab, setTab] = useState<Tab>("home");
+  const [side, setSide] = useState<"family" | "action">("action");
   const [lang, setLang] = useState<Lang>("en");
   const [mood, setMood] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -41,6 +44,17 @@ export default function MindShield() {
 
   const hasChat = messages.some((m) => m.role === "user");
   const userText = messages.filter((m) => m.role === "user").map((m) => m.content).join(" ");
+  const left: Tab = tab === "talk" || (tab !== "home" && hasChat) ? "talk" : "home";
+  const t = T[lang];
+
+  function go(id: Tab) {
+    setTab(id);
+    if (id === "family" || id === "action") setSide(id);
+  }
+
+  /** Visible if it's the phone's current tab, or (from md up) one of the two open panes. */
+  const panel = (id: Tab) =>
+    `${tab === id ? "" : "hidden"} ${id === left || id === side ? "md:flex md:flex-1 md:flex-col" : "md:hidden"}`;
 
   async function send(raw: string) {
     // Guardrail 1: crisis check runs locally, BEFORE any network call, so help shows instantly.
@@ -50,7 +64,7 @@ export default function MindShield() {
     const next: ChatMessage[] = [...messages, { role: "user", content: text }];
     setMessages(next);
     setRedacted(count);
-    setTab("talk");
+    go("talk");
     setChatLoading(true);
     setBrief(null);
     setIncident(null);
@@ -110,53 +124,80 @@ export default function MindShield() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-sage-50/60 shadow-xl shadow-sage-200/40 sm:border-x sm:border-sage-100">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-sage-50/60 shadow-xl shadow-sage-200/40 sm:border-x sm:border-sage-100 md:h-dvh md:max-w-none md:border-0 md:bg-transparent md:shadow-none">
       <Header lang={lang} onExit={quickExit} onHelp={() => setShowHotlines(true)} />
       {crisis && <CrisisBanner lang={lang} onMore={() => setShowHotlines(true)} />}
 
-      <main className="flex-1">
-        {tab === "home" && <HomeScreen lang={lang} setLang={setLang} mood={mood} setMood={setMood} onStart={send} />}
-        {tab === "talk" && (
-          <TalkScreen
-            lang={lang}
-            messages={messages}
-            loading={chatLoading}
-            redacted={redacted}
-            mode={mode}
-            onSend={send}
-            goFamily={() => setTab("family")}
-            goAction={() => setTab("action")}
+      <main className="flex-1 md:mx-auto md:grid md:min-h-0 md:w-full md:max-w-7xl md:grid-cols-2 md:gap-5 md:p-5 lg:grid-cols-[5fr_6fr] lg:gap-6 lg:p-6">
+        <section className="md:flex md:min-h-0 md:flex-col md:overflow-hidden md:rounded-3xl md:border md:border-sage-100 md:bg-sage-50/70 md:shadow-sm">
+          <PaneTabs
+            items={[
+              { id: "home", icon: "🏠", label: t.tabs.home },
+              { id: "talk", icon: "💬", label: t.tabs.talk },
+            ]}
+            active={left}
+            onSelect={go}
           />
-        )}
-        {tab === "family" && (
-          <FamilyScreen
-            lang={lang}
-            hasChat={hasChat}
-            audience={audience}
-            setAudience={(a) => (setAudience(a), setBrief(null))}
-            briefLang={briefLang}
-            setBriefLang={(l) => (setBriefLang(l), setBrief(null))}
-            brief={brief}
-            loading={briefLoading}
-            onGenerate={generateBrief}
+          <div className="md:flex md:min-h-0 md:flex-1 md:flex-col md:overflow-y-auto">
+            <div className={panel("home")}>
+              <HomeScreen lang={lang} setLang={setLang} mood={mood} setMood={setMood} onStart={send} />
+            </div>
+            <div className={panel("talk")}>
+              <TalkScreen
+                lang={lang}
+                messages={messages}
+                loading={chatLoading}
+                redacted={redacted}
+                mode={mode}
+                onSend={send}
+                goFamily={() => go("family")}
+                goAction={() => go("action")}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="md:flex md:min-h-0 md:flex-col md:overflow-hidden md:rounded-3xl md:border md:border-sage-100 md:bg-white/70 md:shadow-sm">
+          <PaneTabs
+            items={[
+              { id: "family", icon: "👨‍👩‍👧", label: t.tabs.family },
+              { id: "action", icon: "🛡️", label: t.tabs.action },
+            ]}
+            active={side}
+            onSelect={go}
           />
-        )}
-        {tab === "action" && (
-          <ActionScreen
-            lang={lang}
-            hasChat={hasChat}
-            checked={checked}
-            toggle={(i) => setChecked((c) => c.map((v, j) => (j === i ? !v : v)))}
-            incident={incident}
-            setIncident={setIncident}
-            loading={incidentLoading}
-            onBuild={buildIncident}
-            fallbackCategory={detectCategory(userText)}
-          />
-        )}
+          <div className="md:min-h-0 md:flex-1 md:overflow-y-auto">
+            <div className={panel("family")}>
+              <FamilyScreen
+                lang={lang}
+                hasChat={hasChat}
+                audience={audience}
+                setAudience={(a) => (setAudience(a), setBrief(null))}
+                briefLang={briefLang}
+                setBriefLang={(l) => (setBriefLang(l), setBrief(null))}
+                brief={brief}
+                loading={briefLoading}
+                onGenerate={generateBrief}
+              />
+            </div>
+            <div className={panel("action")}>
+              <ActionScreen
+                lang={lang}
+                hasChat={hasChat}
+                checked={checked}
+                toggle={(i) => setChecked((c) => c.map((v, j) => (j === i ? !v : v)))}
+                incident={incident}
+                setIncident={setIncident}
+                loading={incidentLoading}
+                onBuild={buildIncident}
+                fallbackCategory={detectCategory(userText)}
+              />
+            </div>
+          </div>
+        </section>
       </main>
 
-      <BottomNav lang={lang} tab={tab} setTab={setTab} />
+      <BottomNav lang={lang} tab={tab} setTab={go} />
       {showHotlines && <HotlineSheet lang={lang} onClose={() => setShowHotlines(false)} />}
     </div>
   );

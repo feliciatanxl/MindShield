@@ -434,3 +434,6 @@ next-env.d.ts
 .env*.local
 .env
 *.tsbuildinfo
+
+# Claude Code local settings
+.claude/

@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sage-50: #f3f8f4;
+  --color-sage-100: #e3efe6;
+  --color-sage-200: #c6dfcd;
+  --color-sage-500: #5d8f6c;
+  --color-sage-600: #4a7658;
+  --color-sage-700: #3b5e46;
+  --color-lav-50: #f7f5fc;
+  --color-lav-100: #ece7f8;
+  --color-lav-200: #d9cff1;
+  --color-lav-500: #7d68b8;
+  --color-lav-600: #67539f;
+  --color-ink: #1f2a37;
+  --color-muted: #5b6676;
+  --color-rose-soft: #fbeceb;
+  --color-rose-ink: #8f2f2a;
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Noto Sans", "Noto Sans SC", "Noto Sans Tamil", "Microsoft YaHei", "Nirmala UI", sans-serif;
+}
+
+html,
+body {
+  background: linear-gradient(160deg, var(--color-lav-50), var(--color-sage-50));
+  color: var(--color-ink);
+  min-height: 100%;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.rise { animation: rise 0.25s ease-out both; }
+
+@keyframes pulse-dot {
+  0%, 80%, 100% { opacity: 0.25; }
+  40% { opacity: 1; }
+}
+.dot { animation: pulse-dot 1.2s infinite; }
+.dot:nth-child(2) { animation-delay: 0.15s; }
+.dot:nth-child(3) { animation-delay: 0.3s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .dot { animation: none; }
+}
+
+@media print {
+  body { background: white; }
+  .no-print { display: none !important; }
+  .print-area { box-shadow: none !important; border: none !important; }
+}
